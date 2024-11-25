@@ -1,0 +1,39 @@
+from typing import Dict, List
+
+def is_valid(assignment, state, color, neighbors):
+    for neighbor in neighbors[state]:
+        if neighbor in assignment and assignment[neighbor] == color:
+            return False
+    return True
+
+def backtrack(assignment, states, colors, neighbors):
+    if len(assignment) == len(states):
+        return assignment
+    
+    unassigned = [s for s in states if s not in assignment]
+    state = unassigned[0]
+    for color in colors:
+        if is_valid(assignment, state, color, neighbors):
+            assignment[state] = color
+            result = backtrack(assignment, states, colors, neighbors)
+            if result:
+                return result
+            del assignment[state]
+    return None
+
+def map_coloring(states: List[str], colors: List[str], neighbors: Dict[str, List[str]]):
+    return backtrack({}, states, colors, neighbors)
+
+# Example usage
+states = ['WA', 'NT', 'SA', 'Q', 'NSW', 'V', 'T']
+colors = ['Red', 'Green', 'Blue']
+neighbors = {
+    'WA': ['NT', 'SA'],
+    'NT': ['WA', 'SA', 'Q'],
+    'SA': ['WA', 'NT', 'Q', 'NSW', 'V'],
+    'Q': ['NT', 'SA', 'NSW'],
+    'NSW': ['Q', 'SA', 'V'],
+    'V': ['SA', 'NSW'],
+    'T': []
+}
+print("Map Coloring:", map_coloring(states, colors, neighbors))
